@@ -46,6 +46,7 @@ Precomputed scans for online default frames are here: https://drive.google.com/d
   * [⏳ Training](#-training)
     + [🎛️ Finetuning a pretrained model](#%EF%B8%8F-finetuning-a-pretrained-model)
   * [🔧 Other training and testing options](#-other-training-and-testing-options)
+    + [📊 Testing on Custom Dataset](#-testing-on-custom-dataset)
   * [✨ Visualization](#-visualization)
   * [📝🧮👩‍💻 Notation for Transformation Matrices](#-notation-for-transformation-matrices)
   * [🗺️ World Coordinate System](#%EF%B8%8F-world-coordinate-system)
@@ -123,7 +124,7 @@ CUDA_VISIBLE_DEVICES=0 python test.py --name HERO_MODEL \
 
 This will output meshes, quick depth viz, and socres when benchmarked against LiDAR depth under `OUTPUT_PATH`. 
 
-This command uses `vdr_dense.yaml` which will generate depths for every frame and fuse them into a mesh. In the paper we report scores with fused keyframes instead, and you can run those using `vdr_default.yaml`. You can also use `dense_offline` tuples by instead using `vdr_dense_offline.yaml`.
+This command uses `vdr_dense.yaml` which will generate depths for every frame and fuse them into a mesh. In the paper we report scores with fused keyframes instead, and you can run those using `vdr_default.yaml`. You can also use `dense_offline` tuples by instead using `vdr_dense_offline.yaml`. 
 
 
 
@@ -454,6 +455,8 @@ Change the data configs to whatever dataset you want to finetune to.
 ## 🔧 Other training and testing options
 
 See `options.py` for the range of other training options, such as learning rates and ablation settings, and testing options.
+
+## Testing on Custom Dataset
 
 ## ✨ Visualization
 
