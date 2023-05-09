@@ -193,6 +193,8 @@ def get_fuser(opts, scan):
                                                 opts.split, scan)
     else:
         gt_path = None
+    
+    print(gt_path)
 
     if opts.depth_fuser == "ours":
         if opts.fuse_color:

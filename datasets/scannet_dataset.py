@@ -6,6 +6,7 @@ import torch
 from datasets.generic_mvs_dataset import GenericMVSDataset
 from torchvision import transforms
 from utils.generic_utils import (readlines, read_image_file)
+from tqdm import tqdm
 
 
 class ScannetDataset(GenericMVSDataset):
@@ -84,8 +85,8 @@ class ScannetDataset(GenericMVSDataset):
             num_images_in_tuple=None,
             color_transform=transforms.ColorJitter(0.2, 0.2, 0.2, 0.2),
             tuple_info_file_location=None,
-            image_height=384,
-            image_width=512,
+            image_height=240,
+            image_width=320,
             high_res_image_width=640,
             high_res_image_height=480,
             image_depth_ratio=2,
@@ -185,7 +186,7 @@ class ScannetDataset(GenericMVSDataset):
         scan_dir = os.path.join(self.dataset_path, 
                             self.get_sub_folder_dir(split), scan)
 
-        return os.path.join(scan_dir, "valid_frames.txt")
+        return 0 #os.path.join(scan_dir, "valid_frames.txt")
 
     def get_valid_frame_ids(self, split, scan, store_computed=True):
         """ Either loads or computes the ids of valid frames in the dataset for
@@ -209,82 +210,85 @@ class ScannetDataset(GenericMVSDataset):
         """
         scan = scan.rstrip("\n")
         valid_frame_path = self.get_valid_frame_path(split, scan)
+        print("valid_frame_path: ", valid_frame_path)
 
-        if os.path.exists(valid_frame_path):
-            # valid frame file exists, read that to find the ids of frames with 
-            # valid poses.
-            with open(valid_frame_path) as f:
-                valid_frames = f.readlines()
-        else:
+        # if os.path.exists(valid_frame_path):
+        #     # valid frame file exists, read that to find the ids of frames with 
+        #     # valid poses.
+        #     with open(valid_frame_path) as f:
+        #         valid_frames = f.readlines()
+       # else:
             # find out which frames have valid poses 
 
             #get scannet directories
-            scan_dir = os.path.join(self.dataset_path, 
-                            self.get_sub_folder_dir(split), scan)
-            sensor_data_dir = os.path.join(scan_dir, "sensor_data")
-            meta_file_path = os.path.join(scan_dir, scan + ".txt")
+        scan_dir = os.path.join(self.dataset_path, 
+                        self.get_sub_folder_dir(split), scan)
+        sensor_data_dir = os.path.join(scan_dir, "sensor_data")
+        print("sensor_data: ", sensor_data_dir)
+        meta_file_path = os.path.join(scan_dir, scan + ".txt")
+        
+        with open(meta_file_path, 'r') as f:
+            meta_info_lines = f.readlines()
+            meta_info_lines = [line.split(' = ') for line in 
+                                                    meta_info_lines]
+            meta_data = {key: val for key, val in meta_info_lines}
+
+        # fetch total number of color files
+        color_file_count = int(meta_data["numColorFrames"].strip())
+
+        dist_to_last_valid_frame = 0
+        bad_file_count = 0
+        valid_frames = []
+        for frame_id in tqdm(range(color_file_count)):
+            # for a frame to be valid, we need a valid pose and a valid 
+            # color frame.
+
+            color_filename = os.path.join(sensor_data_dir, 
+                                        f"frame-{frame_id:04d}.color.jpg")
+            print(color_filename)
+            depth_filename = color_filename.replace(f"color.jpg", 
+                                                    f"depth.png")
+            pose_path = os.path.join(sensor_data_dir, 
+                                        f"frame-{frame_id:04d}.pose.txt")
+
+            # check if an image file exists.
+            if not os.path.isfile(color_filename):
+                dist_to_last_valid_frame+=1
+                bad_file_count+=1
+                continue
             
-            with open(meta_file_path, 'r') as f:
-                meta_info_lines = f.readlines()
-                meta_info_lines = [line.split(' = ') for line in 
-                                                        meta_info_lines]
-                meta_data = {key: val for key, val in meta_info_lines}
+            # check if a depth file exists.
+            if not os.path.isfile(depth_filename):
+                dist_to_last_valid_frame+=1
+                bad_file_count+=1
+                continue
+            
+            world_T_cam_44 = np.genfromtxt(pose_path).astype(np.float32)
+            # check if the pose is valid.
+            if (np.isnan(np.sum(world_T_cam_44)) or 
+                np.isinf(np.sum(world_T_cam_44)) or 
+                np.isneginf(np.sum(world_T_cam_44))
+            ):
+                dist_to_last_valid_frame+=1
+                bad_file_count+=1
+                continue
 
-            # fetch total number of color files
-            color_file_count = int(meta_data["numColorFrames"].strip())
-
+            valid_frames.append(f"{scan} {frame_id:04d} {dist_to_last_valid_frame}")
             dist_to_last_valid_frame = 0
-            bad_file_count = 0
-            valid_frames = []
-            for frame_id in range(color_file_count):
-                # for a frame to be valid, we need a valid pose and a valid 
-                # color frame.
 
-                color_filename = os.path.join(sensor_data_dir, 
-                                            f"frame-{frame_id:06d}.color.jpg")
-                depth_filename = color_filename.replace(f"color.jpg", 
-                                                        f"depth.png")
-                pose_path = os.path.join(sensor_data_dir, 
-                                            f"frame-{frame_id:06d}.pose.txt")
+        print(f"Scene {scan} has {bad_file_count} bad frame files out of "
+                f"{color_file_count}.")
 
-                # check if an image file exists.
-                if not os.path.isfile(color_filename):
-                    dist_to_last_valid_frame+=1
-                    bad_file_count+=1
-                    continue
-                
-                # check if a depth file exists.
-                if not os.path.isfile(depth_filename):
-                    dist_to_last_valid_frame+=1
-                    bad_file_count+=1
-                    continue
-                
-                world_T_cam_44 = np.genfromtxt(pose_path).astype(np.float32)
-                # check if the pose is valid.
-                if (np.isnan(np.sum(world_T_cam_44)) or 
-                    np.isinf(np.sum(world_T_cam_44)) or 
-                    np.isneginf(np.sum(world_T_cam_44))
-                ):
-                    dist_to_last_valid_frame+=1
-                    bad_file_count+=1
-                    continue
-
-                valid_frames.append(f"{scan} {frame_id:06d} {dist_to_last_valid_frame}")
-                dist_to_last_valid_frame = 0
-
-            print(f"Scene {scan} has {bad_file_count} bad frame files out of "
-                  f"{color_file_count}.")
-
-            # store computed if we're being asked, but wrapped inside a try 
-            # incase this directory is read only.
-            if store_computed:
-                # store those files to valid_frames.txt
-                try:
-                    with open(valid_frame_path, 'w') as f:
-                        f.write('\n'.join(valid_frames) + '\n')
-                except Exception as e:
-                    print(f"Couldn't save valid_frames at {valid_frame_path}, "
-                        f"cause:\n", e)
+        # store computed if we're being asked, but wrapped inside a try 
+        # incase this directory is read only.
+        if store_computed:
+            # store those files to valid_frames.txt
+            try:
+                with open(valid_frame_path, 'w') as f:
+                    f.write('\n'.join(valid_frames) + '\n')
+            except Exception as e:
+                print(f"Couldn't save valid_frames at {valid_frame_path}, "
+                    f"cause:\n", e)
 
         return valid_frames
 
@@ -293,12 +297,16 @@ class ScannetDataset(GenericMVSDataset):
         """ 
         Returns a path to a gt mesh reconstruction file.
         """
+       
         gt_path = os.path.join(
                         dataset_path,
                         ScannetDataset.get_sub_folder_dir(split),
                         scan_id,
-                        f'{scan_id}_vh_clean_2.ply',
+                        #f'{scan_id}_vh_clean_2.ply',
+                        f'{scan_id}.obj'
                     )
+        print(gt_path)
+        
         return gt_path
 
     def get_color_filepath(self, scan_id, frame_id):
@@ -315,6 +323,8 @@ class ScannetDataset(GenericMVSDataset):
                 from the dataset.
 
         """
+        print("scan_id: ", scan_id)
+        print("frame_id: ", frame_id)
         scene_path = os.path.join(self.scenes_path, scan_id)
         sensor_data_dir = os.path.join(scene_path, "sensor_data")
 
@@ -561,8 +571,11 @@ class ScannetDataset(GenericMVSDataset):
 
         """
         pose_path = self.get_pose_filepath(scan_id, frame_id)
+        print("The pose_path is: ", pose_path)
 
         world_T_cam = np.genfromtxt(pose_path).astype(np.float32)
+      
         cam_T_world = np.linalg.inv(world_T_cam)
+       
 
         return world_T_cam, cam_T_world

@@ -448,6 +448,7 @@ def crawl_subprocess_long(opts_temp_filepath, scan, count, progress):
     dists_to_last_valid = []
 
     frame_ind_to_frame_id = {}
+ 
     for frame_ind, frame_line in enumerate(valid_frames):
         frame_ind_to_frame_id[frame_ind] = frame_line.strip().split(" ")[1]
         try:
@@ -460,6 +461,7 @@ def crawl_subprocess_long(opts_temp_filepath, scan, count, progress):
     for frame_ind in range(len(valid_frames)):
         frame_id = frame_ind_to_frame_id[frame_ind]
         world_T_cam_44, _ = ds.load_pose(scan.rstrip("\n"), frame_id)
+        print(world_T_cam_44)
         poses.append(world_T_cam_44)
 
     subsequence_length = opts.num_images_in_tuple

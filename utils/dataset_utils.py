@@ -34,7 +34,10 @@ def get_dataset(dataset_name,
     if dataset_name == "scannet":
 
         with open(split_filepath) as file:
+            print(split_filepath)
             scans = file.readlines()
+            print(scans)
+
             scans = [scan.strip() for scan in scans]
         
         if single_debug_scan_id is not None:
@@ -46,6 +49,23 @@ def get_dataset(dataset_name,
             print(f" ScanNet Dataset, number of scans: {len(scans)} ".center(80, "#"))
             print(f"".center(80, "#"))
             print("")
+
+    elif dataset_name == "scenenet":
+
+        with open(split_filepath) as file:
+            scans = file.readlines()
+            scans = [scans.strip() for scan in scans]
+
+        if single_debug_scan_id is not None:
+            scans = [single_debug_scan_id]
+        
+        dataset_class = ScannetDataset
+        if verbose:
+            print(f"".center(80, "#"))
+            print(f" ScanNet Dataset, number of scans: {len(scans)} ".center(80, "#"))
+            print(f"".center(80, "#"))
+            print("")
+
 
 
     elif dataset_name == "arkit":
