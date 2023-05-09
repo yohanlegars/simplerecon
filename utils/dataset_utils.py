@@ -54,8 +54,9 @@ def get_dataset(dataset_name,
     elif dataset_name == "custom":
 
         with open(split_filepath) as file:
+            print(split_filepath)
             scans = file.readlines()
-            scans = [scans.strip() for scan in scans]
+            scans = [scan.strip() for scan in scans]
 
         if single_debug_scan_id is not None:
             scans = [single_debug_scan_id]
