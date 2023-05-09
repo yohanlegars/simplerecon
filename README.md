@@ -32,29 +32,34 @@ Precomputed scans for online default frames are here: https://drive.google.com/d
 
 ## Table of Contents
 
-  * [🗺️ Overview](#%EF%B8%8F-overview)
-  * [⚙️ Setup](#%EF%B8%8F-setup)
-  * [📦 Models](#-models)
-  * [🚀 Speed](#-speed)
-  * [📝 TODOs:](#-todos)
-  * [🏃 Running out of the box!](#-running-out-of-the-box)
-  * [💾 ScanNetv2 Dataset](#-scannetv2-dataset)
-  * [🖼️🖼️🖼️ Frame Tuples](#%EF%B8%8F%EF%B8%8F%EF%B8%8F-frame-tuples)
-  * [📊 Testing and Evaluation](#-testing-and-evaluation)
-  * [👉☁️ Point Cloud Fusion](#%EF%B8%8F-point-cloud-fusion)
-  * [📊 Mesh Metrics](#-mesh-metrics)
-  * [⏳ Training](#-training)
-    + [🎛️ Finetuning a pretrained model](#%EF%B8%8F-finetuning-a-pretrained-model)
-  * [🔧 Other training and testing options](#-other-training-and-testing-options)
-    + [📊 Testing on Custom Dataset](#-testing-on-custom-dataset)
-  * [✨ Visualization](#-visualization)
-  * [📝🧮👩‍💻 Notation for Transformation Matrices](#-notation-for-transformation-matrices)
-  * [🗺️ World Coordinate System](#%EF%B8%8F-world-coordinate-system)
-  * [🐜🔧 Bug Fixes](#-bug-fixes)
-  * [🗺️💾 COLMAP Dataset](#%EF%B8%8F-colmap-dataset)
-  * [🙏 Acknowledgements](#-acknowledgements)
-  * [📜 BibTeX](#-bibtex)
-  * [👩‍⚖️ License](#%EF%B8%8F-license)
+- [SimpleRecon: 3D Reconstruction Without 3D Convolutions](#simplerecon-3d-reconstruction-without-3d-convolutions)
+  - [🆕 Updates](#-updates)
+  - [Table of Contents](#table-of-contents)
+  - [🗺️ Overview](#️-overview)
+  - [⚙️ Setup](#️-setup)
+  - [📦 Models](#-models)
+  - [🚀 Speed](#-speed)
+  - [📝 TODOs:](#-todos)
+  - [🏃 Running out of the box!](#-running-out-of-the-box)
+  - [💾 ScanNetv2 Dataset](#-scannetv2-dataset)
+  - [🖼️🖼️🖼️ Frame Tuples](#️️️-frame-tuples)
+  - [📊 Testing and Evaluation](#-testing-and-evaluation)
+  - [👉☁️ Point Cloud Fusion](#️-point-cloud-fusion)
+  - [📊 Mesh Metrics](#-mesh-metrics)
+  - [⏳ Training](#-training)
+    - [🎛️ Finetuning a pretrained model](#️-finetuning-a-pretrained-model)
+  - [🔧 Other training and testing options](#-other-training-and-testing-options)
+  - [Testing on Custom Dataset](#testing-on-custom-dataset)
+  - [✨ Visualization](#-visualization)
+  - [📝🧮👩‍💻 Notation for Transformation Matrices](#-notation-for-transformation-matrices)
+  - [🗺️ World Coordinate System](#️-world-coordinate-system)
+  - [🐜🔧 Bug Fixes](#-bug-fixes)
+    - [**Update 31/12/2022:**](#update-31122022)
+    - [**Tiny bug with frame count:**](#tiny-bug-with-frame-count)
+  - [🗺️💾 COLMAP Dataset](#️-colmap-dataset)
+  - [🙏 Acknowledgements](#-acknowledgements)
+  - [📜 BibTeX](#-bibtex)
+  - [👩‍⚖️ License](#️-license)
 
 ## 🗺️ Overview
 
@@ -457,6 +462,56 @@ Change the data configs to whatever dataset you want to finetune to.
 See `options.py` for the range of other training options, such as learning rates and ablation settings, and testing options.
 
 ## Testing on Custom Dataset
+
+The custom dataset should follow ScanNetv2 dataset structure:
+
+    dataset_path
+        scans_test (test scans)
+            scene0707
+                scene0707.ply (gt mesh)
+                sensor_data
+                    frame-0261.pose.txt
+                    frame-0261.color.jpg 
+                    frame-0261.color.512.png (optional, image at 512x384)
+                    frame-0261.color.640.png (optional, image at 640x480)
+                    frame-0261.depth.png (full res depth, stored scale *1000)
+                    frame-0261.depth.256.png (optional, depth at 256x192 also
+                                                scaled)
+                scene0707.txt (scan metadata and image sizes)
+                intrinsic
+                    intrinsic_depth.txt
+                    intrinsic_color.txt
+            ...
+        
+
+In this example `scene0707.txt` should contain the scan's metadata:
+
+        colorHeight = 968
+        colorToDepthExtrinsics = 0.999263 -0.010031 0.037048 ........
+        colorWidth = 1296
+        depthHeight = 480
+        depthWidth = 640
+        fx_color = 1170.187988
+        fx_depth = 570.924255
+        fy_color = 1170.187988
+        fy_depth = 570.924316
+        mx_color = 647.750000
+        mx_depth = 319.500000
+        my_color = 483.750000
+        my_depth = 239.500000
+        numColorFrames = 784
+        numDepthFrames = 784
+        numIMUmeasurements = 1632
+
+`frame-0261.pose.txt` should contain pose in the form:
+
+        -0.384739 0.271466 -0.882203 4.98152
+        0.921157 0.0521417 -0.385682 1.46821
+        -0.0587002 -0.961035 -0.270124 1.51837
+        0.0        0.0       0.0       1.0
+
+
+
 
 ## ✨ Visualization
 
