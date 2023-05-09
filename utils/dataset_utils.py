@@ -1,6 +1,7 @@
 from datasets.colmap_dataset import ColmapDataset
 from datasets.arkit_dataset import ARKitDataset
 from datasets.scannet_dataset import ScannetDataset
+from datasets.custom_dataset import CustomDataset
 from datasets.seven_scenes_dataset import SevenScenesDataset
 from datasets.vdr_dataset import VDRDataset
 from datasets.scanniverse_dataset import ScanniverseDataset
@@ -50,7 +51,7 @@ def get_dataset(dataset_name,
             print(f"".center(80, "#"))
             print("")
 
-    elif dataset_name == "scenenet":
+    elif dataset_name == "custom":
 
         with open(split_filepath) as file:
             scans = file.readlines()
@@ -59,10 +60,10 @@ def get_dataset(dataset_name,
         if single_debug_scan_id is not None:
             scans = [single_debug_scan_id]
         
-        dataset_class = ScannetDataset
+        dataset_class = CustomDataset
         if verbose:
             print(f"".center(80, "#"))
-            print(f" ScanNet Dataset, number of scans: {len(scans)} ".center(80, "#"))
+            print(f" Custom Dataset, number of scans: {len(scans)} ".center(80, "#"))
             print(f"".center(80, "#"))
             print("")
 
