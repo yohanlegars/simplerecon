@@ -3,6 +3,7 @@ import open3d as o3d
 import torch
 import trimesh
 from datasets.scannet_dataset import ScannetDataset
+from datasets.custom_dataset import CustomDataset
 from utils.generic_utils import reverse_imagenet_normalize
 
 from tools.tsdf import TSDF, TSDFFuser
@@ -191,6 +192,11 @@ def get_fuser(opts, scan):
     if opts.dataset == "scannet":
         gt_path = ScannetDataset.get_gt_mesh_path(opts.dataset_path, 
                                                 opts.split, scan)
+    
+    elif opts.dataset == "custom":
+        gt_path = CustomDataset.get_gt_mesh_path(opts.dataset_path,
+                                                 opts.split,scan)
+
     else:
         gt_path = None
     

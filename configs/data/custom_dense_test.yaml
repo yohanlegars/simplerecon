@@ -1,0 +1,8 @@
+!!python/object:options.Options
+dataset_path: /home/yohan-sl-intern/Documents/SceneNetRGBD-val/
+tuple_info_split_file: data_splits/custom/standard_split/
+dataset_scan_split_file: data_splits/custom/standard_split/custom_test.txt
+dataset: custom
+num_images_in_tuple: 8
+frame_tuple_type: dense
+split: test
