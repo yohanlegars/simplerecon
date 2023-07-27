@@ -577,17 +577,17 @@ if __name__ == '__main__':
     option_handler.pretty_print_options()
     opts = option_handler.options
     
-    # Path(os.path.join(os.path.expanduser("~"), "tmp/")).mkdir(
-    #                                     parents=True, exist_ok=True
-                                    # )
+    Path(os.path.join(os.path.expanduser("~"), "tmp/")).mkdir(
+                                        parents=True, exist_ok=True
+                                    )
     
-    # opts_temp_filepath = os.path.join(
-    #     os.path.expanduser("~"),
-    #     "tmp/", 
-    #     ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
-    #         + ".yaml",
-    # )
-    # option_handler.save_options_as_yaml(opts_temp_filepath, opts)
+    opts_temp_filepath = os.path.join(
+        os.path.expanduser("~"),
+        "tmp/", 
+        ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+            + ".yaml",
+    )
+    option_handler.save_options_as_yaml(opts_temp_filepath, opts)
 
     np.random.seed(42)
     random.seed(42)
@@ -597,11 +597,14 @@ if __name__ == '__main__':
         opts.precision = 32
 
     # get dataset
+    print(opts.single_debug_scan_id)
     dataset_class, scan_names = get_dataset(
                                     opts.dataset, 
                                     opts.dataset_scan_split_file, 
                                     opts.single_debug_scan_id,
                                 )
+    
+    print(scan_names)
 
     item_list = []
 

@@ -194,8 +194,9 @@ def get_fuser(opts, scan):
                                                 opts.split, scan)
     
     elif opts.dataset == "custom":
-        gt_path = CustomDataset.get_gt_mesh_path(opts.dataset_path,
-                                                 opts.split,scan)
+        # gt_path = CustomDataset.get_gt_mesh_path(opts.dataset_path,
+                                                #  opts.split,scan)
+        gt_path = None
 
     else:
         gt_path = None

@@ -290,10 +290,16 @@ class OptionsHandler():
                 for config_filepath in config_filepaths:
                     config_options = OptionsHandler.load_options_from_yaml(
                                                                 config_filepath)
+                    print("config options are ", config_options)
                     self.merge_config_options(config_options)
             else:
+                
+                print("config filepath is ", config_filepaths)
                 config_options = OptionsHandler.load_options_from_yaml(
                                                                config_filepaths)
+                
+                print("config options are ", config_options)
+               
                 self.merge_config_options(config_options)
 
             self.config_filepaths = config_filepaths

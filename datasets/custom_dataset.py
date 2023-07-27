@@ -239,12 +239,12 @@ class CustomDataset(GenericMVSDataset):
             # color frame.
 
             color_filename = os.path.join(sensor_data_dir, 
-                                        f"frame-{frame_id:04d}.color.jpg")
+                                        f"frame-{frame_id:06d}.color.jpg")
             print(color_filename)
             depth_filename = color_filename.replace(f"color.jpg", 
                                                     f"depth.png")
             pose_path = os.path.join(sensor_data_dir, 
-                                        f"frame-{frame_id:04d}.pose.txt")
+                                        f"frame-{frame_id:06d}.pose.txt")
 
             # check if an image file exists.
             if not os.path.isfile(color_filename):
@@ -268,7 +268,7 @@ class CustomDataset(GenericMVSDataset):
                 bad_file_count+=1
                 continue
 
-            valid_frames.append(f"{scan} {frame_id:04d} {dist_to_last_valid_frame}")
+            valid_frames.append(f"{scan} {frame_id:06d} {dist_to_last_valid_frame}")
             dist_to_last_valid_frame = 0
 
         print(f"Scene {scan} has {bad_file_count} bad frame files out of "
@@ -318,8 +318,8 @@ class CustomDataset(GenericMVSDataset):
                 from the dataset.
 
         """
-        print("scan_id: ", scan_id)
-        print("frame_id: ", frame_id)
+        # print("scan_id: ", scan_id)
+        # print("frame_id: ", frame_id)
         scene_path = os.path.join(self.scenes_path, scan_id)
         sensor_data_dir = os.path.join(scene_path, "sensor_data")
 
@@ -566,7 +566,7 @@ class CustomDataset(GenericMVSDataset):
 
         """
         pose_path = self.get_pose_filepath(scan_id, frame_id)
-        print("The pose_path is: ", pose_path)
+        
 
         world_T_cam = np.genfromtxt(pose_path).astype(np.float32)
       

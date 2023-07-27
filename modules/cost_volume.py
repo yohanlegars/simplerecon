@@ -566,6 +566,7 @@ class FeatureVolumeManager(CostVolumeManager):
                                                         num_src_frames, dim=0)
 
             # project those points down to each source view.
+
             cam_points_B3N = self.projector(
                                         world_points_B4N, 
                                         src_Ks.view(-1, 4, 4), 

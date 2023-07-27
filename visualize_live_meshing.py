@@ -265,6 +265,8 @@ def main(opts):
                                 )
                 meshes = ([] if scene_trimesh_mesh is None 
                                                     else [scene_trimesh_mesh])
+                
+                print(meshes)
 
                 render_fpv = fpv_renderer.render_mesh(
                                             meshes,   
