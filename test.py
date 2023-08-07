@@ -315,6 +315,7 @@ def main(opts):
 
                         # both this scene and all frame averagers
                         scene_frame_metrics.update_results(element_metrics)
+                    
                         all_frame_metrics.update_results(element_metrics)
 
                 ######################### DEPTH FUSION #########################

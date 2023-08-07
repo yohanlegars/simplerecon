@@ -5,5 +5,5 @@ dataset_scan_split_file: data_splits/custom/standard_split/custom_test.txt
 dataset: custom
 mv_tuple_file_suffix: _eight_view_deepvmvs_dense.txt
 num_images_in_tuple: 8
-frame_tuple_type: dense
+frame_tuple_type: default
 split: test
