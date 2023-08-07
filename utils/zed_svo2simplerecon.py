@@ -9,7 +9,7 @@ import argparse
 
 # example command to extract every 50 images from svo and generate the format for running simplerecon eval.
 """
-python3 svo2simplerecon.py \
+python3 zed_svo2simplerecon.py \
 --path_svo /path/to/filename.svo\
 --output_path /path/to/images_output_dir\
 --resolution 640 480
