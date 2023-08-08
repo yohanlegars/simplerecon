@@ -12,9 +12,7 @@ This is the reference PyTorch implementation for training and testing MVS depth 
   <img src="media/teaser.jpeg" alt="example output" width="720" />
 </p>
 
-
-https://user-images.githubusercontent.com/14994206/187824325-e1878d77-2f14-4ea9-bc02-3fded1bb1851.mp4
-
+https://github.com/nianticlabs/simplerecon/assets/14994206/ae5074c2-6537-45f1-9f5e-0b3646a96dcb
 
 https://user-images.githubusercontent.com/14994206/189788536-5fa8a1b5-ae8b-4f64-92d6-1ff1abb03eaf.mp4
 
@@ -22,7 +20,10 @@ This code is for non-commercial use; please see the [license file](LICENSE) for 
 
 ## 🆕 Updates
 
+25/05/2023: Fixed package verions for `llvm-openmp`, `clang`, and `protobuf`. Do use this new environment file if you have trouble running the code and/or if dataloading is being limited to a single thread.
+
 09/03/2023: Added kornia version to the environments file to fix kornia typing issue. (thanks @natesimon!)
+
 26/01/2023: The license has been modified to make running the model for academic reasons easier. Please the LICENSE file for the exact details.
 
 There is an update as of 31/12/2022 that fixes slightly wrong intrinsics, flip augmentation for the cost volume, and a 
